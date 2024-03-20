@@ -1,0 +1,140 @@
+{{!--
+Authors: Erin McBride and Blake Jennings
+Updated on 03/18/2024
+CS_340 Group 170
+Citation for the following file:
+   Date: 3/17/2024
+   Adapted from nodejs-start-app provided on git
+   Some baseline hbs code was copied over, then expanded upon to fit our page.
+   Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+
+
+   Date: 3/14/2024
+   Adapted from Mozilla mdn web docs with entity and attribute names and minor restructing
+   Source URL: https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
+ --}}
+
+{{!-- Taken from nodejs-start-app provided on git --}}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<h1>Customers:</h1>
+
+{{!-- Modified from nodejs-start-app provided on git --}}
+<table id="customers">
+
+    {{!-- Header section --}}
+    <thead>
+        <tr>
+        {{!-- Added by Erin and Blake --}}
+            <th>Customer ID:</th>
+            <th>First Name:</th>
+            <th>Last Name:</th>
+            <th>Organization:</th>
+            <th>Email:</th>
+            <th>Address:</th>
+            {{!-- From nodejs-starter app --}}
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    {{!-- Updated from nodejs-start-app provided on git --}}
+    <tbody>
+
+        {{#each data}}
+        <tr>
+            <td>{{this.customerID}}</td>
+            <td>{{this.firstName}}</td>
+            <td>{{this.lastName}}</td>
+            <td>{{this.organization}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.address}}</td>
+            <td><button onclick="deleteCustomer({{this.customerID}})">Delete</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<script src="./js/delete_customer.js"></script>
+
+<p></p>
+
+{{!-- Form to add a Customer to the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Add Customer:</h2>
+<form id="add-customer-form-ajax">
+    <label for="input-first-name">First Name: </label>
+    <input type="text" name="input-first-name" id="input-first-name-ajax">
+    
+    <label for="input-last-name">Last Name: </label>
+    <input type="text" name="input-last-name" id="input-last-name-ajax">
+
+    <label for="input-organization">Organization:</label>
+    <input type="text" name="input-org" id="input-org-ajax">
+
+    <label for="input-email">Email: </label>
+    <input type="text" name="input-email" id="input-email-ajax">
+
+    <label for="input-address">Address: </label>
+    <input type="text" name="input-address" id="input-address-ajax">
+
+    <input type="submit">
+</form>
+<script src="./js/add_customer.js"></script>
+
+<p></p>
+
+{{!-- Form to update a Customer in the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Update Customer Information:</h2>
+<form id="update-customer-form-ajax">
+
+    <label for="input-customer-id">Customer ID: </label>
+    <select name="input-customer-id" id="mySelect-customer-id">
+        <option value="text">Select a Customer</option>
+        {{#each data}}
+        <option value="{{this.customerID}}">{{this.customerID}} - {{this.firstName}} {{this.lastName}}</option>
+        {{/each}}
+    </select>
+
+
+    <label for="input-first-name">First Name: </label>
+    <input type="text" name="input-first-name" id="input-first-name-update">
+
+    <label for="input-last-name">Last Name: </label>
+    <input type="text" name="input-last-name" id="input-last-name-update">
+
+    <label for="input-organization">Organization: </label>
+    <input type="text" name="input-organization" id="input-organization-update">
+
+    <label for="input-emai">Email: </label>
+    <input type="text" name="input-email" id="input-email-update">
+
+    <label for="input-address">Address: </label>
+    <input type="text" name="input-address" id="input-address-update">
+
+    <input type="submit">
+
+</form>
+{{!-- Modified from nodejs-start-app provided on git --}}
+<script src="./js/update_customer.js"></script>
+
+{{!-- Script to search for a Customer in the table  --}}
+{{!-- Adapted from Mozilla mdn web docs --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const customerSelect = document.getElementById('mySelect-customer-id');
+    customerSelect.addEventListener('change', function() {
+        const customerID = this.value;
+        fetch(`get-customer-info?customerID=${customerID}`)
+        .then(response => response.json())
+        .then(customer => {
+            document.getElementById('input-first-name-update').value = customer.firstName || '';
+            document.getElementById('input-last-name-update').value = customer.lastName || '';
+            document.getElementById('input-organization-update').value = customer.organization || '';
+            document.getElementById('input-email-update').value = customer.email || '';
+            document.getElementById('input-address-update').value = customer.address || '';            
+        })
+        .catch(error => console.error('Error fetching customer', error));
+    });
+});
+</script>

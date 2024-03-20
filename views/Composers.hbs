@@ -1,0 +1,174 @@
+{{!--
+Authors: Erin McBride and Blake Jennings
+Updated on 03/18/2024
+CS_340 Group 170
+Citation for the following file:
+    Date: various throughout 2/2024 and 3/2024
+    Adapted from nodejs-start-app provided on git
+    Some baseline hbs code was copied over, then expanded upon to fit our page.
+    Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+    Source Authors: George Kochera, Michael Curry, Cortona1, dmgs11
+
+    Date: 3/14/2024
+    Adapted from Mozilla mdn web docs with entity and attribute names and minor restructing
+    Source URL: https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
+
+    Date: 3/12/2024
+    Based on learn.Jquery code, formatted for our particular entities and attributes
+    Source URL: https://learn.jquery.com/using-jquery-core/document-ready/
+ --}}
+
+{{!-- Taken from nodejs-start-app provided on git --}}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<h1>Composers:</h1>
+{{!-- Create a table --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<table id="Composers">
+
+    {{!-- Header section --}}
+    {{!-- Updated from nodejs-start-app provided on git --}}
+    <thead>
+        <tr>
+            <th>Composer ID:</th>
+            <th>First name:</th>
+            <th>Last Name:</th>
+            {{!-- From nodejs-starter app --}}
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    {{!-- Updated from nodejs-start-app provided on git --}}
+    <tbody>
+
+        {{#each data}}
+        <tr>
+            <td>{{this.composerID}}</td>
+            <td>{{this.composerFirst}}</td>
+            <td>{{this.composerLast}}</td>
+            <td><button onclick="deleteComposer({{this.composerID}})">Delete</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<script src="./js/delete_composer.js"></script>
+
+
+{{!-- Form to search for a Composer in the table  --}}
+<h2>Search by Composer</h2>
+<form id="search-composer-html" method='GET'>
+    <label for="input-composer-id">Search by Composer: </label>
+    <select name="input-composer-id" id="input-composer-html-search">
+    <option value="">Select Composer</option>
+    {{#each data}}
+    <option value="{{this.composerID}}" data-composer-name="{{this.composerFirst}} {{this.composerLast}}">{{this.composerID}} - {{this.composerFirst}} {{this.composerLast}}</option>
+    {{/each}}
+    </select>
+    
+    {{!-- Taken from nodejs-start-app provided on git --}}
+    <input type="submit">
+    <a href='/'><button>Reset</button></a>
+</form>
+
+<div id="scores-list"></div>
+
+<p></p>
+
+{{!-- Form to add a Composer to the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Add Composer:</h2>
+<form id="add-composer-form-ajax">
+    <label for="input-composer-fname">Composer First Name: </label>
+    <input type="text" name="input-composer-fname" id="input-composer-fname-ajax">
+
+    <label for="input-composer-lname">Composer Last Name: </label>
+    <input type="text" name="input-composer-lname" id="input-composer-lname-ajax">
+
+    <input type="submit">
+</form>
+<script src="./js/add_composer.js"></script>
+
+<p></p>
+
+{{!-- Form to update a Composer in the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Update Composer:</h2>
+<form id="update-composer-form-ajax">
+
+    <label for="input-composer-id">Composer ID: </label>
+    <select name="input-composer-id" id="mySelect-composer-id">
+        <option value="test">Select Composer ID</option>
+        {{#each data}}
+        <option value="{{this.composerID}}">{{this.composerID}} - {{this.composerFirst}} {{this.composerLast}}</option>
+        {{/each}}
+    </select>
+
+    <label for="input-composer-fname">Composer First Name: </label>
+    <input type="text" name="input-composer-fname" id="input-composer-fname-update">
+
+    <label for="input-composer-lname">Composer Last Name: </label>
+    <input type="text" name="input-composer-lname" id="input-composer-lname-update">
+
+    <input type="submit">
+
+</form>
+{{!-- Modified from nodejs-start-app provided on git --}}
+<script src="./js/update_composer.js"></script>
+
+{{!-- Script to search for Scores associated with a Composer  --}}
+{{!-- Adapted from https://learn.jquery.com/using-jquery-core/document-ready/ --}}
+<script>
+$(document).ready(function(){
+    $('#input-composer-html-search').change(function(){
+        var composerID = $(this).val();
+        var composerName = $("#input-composer-html-search option:selected").data('composer-name');
+        if (!composerID) {
+            $('#scores-list').hide();
+            return;
+        }
+        
+        $.ajax({
+            url:'/fetch-scores-by-composer',
+            type: 'GET',
+            data: { composerID: composerID },
+            success: function(response) {
+                console.log("Scores fetched:", response)
+                $('#scores-list').empty();
+                if(response.length > 0){
+                    var header = $('<h3>').text('Scores by ' + composerName);
+                    $('#scores-list').append(header);
+                    response.forEach(function(score){
+                        $('#scores-list').append('<p>' + score.scoreName + '</p>');
+                    });
+                    $('#scores-list').show()
+                } else {
+                    $('#scores-list').hide();
+                }
+            },
+            error: function(error) {
+                console.log(error);
+                $('#scores-list').append('<p>Error fetching scores</p>');
+            }
+        })
+    })
+})
+
+</script>
+
+{{!-- Adapted from Mozilla mdn web docs --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const composerSelect = document.getElementById('mySelect-composer-id');
+    composerSelect.addEventListener('change', function() {
+        const composerID = this.value;
+        fetch(`get-composer-info?composerID=${composerID}`)
+        .then(response => response.json())
+        .then(composer => {
+            document.getElementById('input-composer-fname-update').value = composer.composerFirst || '';
+            document.getElementById('input-composer-lname-update').value = composer.composerLast || '';         
+        })
+        .catch(error => console.error('Error fetching composer', error));
+    });
+});
+</script>

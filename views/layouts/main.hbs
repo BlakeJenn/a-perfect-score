@@ -1,0 +1,34 @@
+{{!--
+Authors: Erin McBride and Blake Jennings
+Updated on 03/17/2024
+CS_340 Group 170
+Citation for the following file:
+   Date: 3/17/2024
+   Adapted from w3bits and nodejs-start-app provided on git
+   Some baseline hbs code was copied over, then expanded upon to fit our page.
+   Source URL:https://github.com/osu-cs340-ecampus/nodejs-starter-app
+   Source Authors: George Kochera, Michael Curry, Cortona1, dmgs11
+
+    Source URL: https://w3bits.com/css-centered-layout/
+            
+ --}}
+
+{{!-- Modified from nodejs-start-app provided on git --}}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/style5.css">
+    {{!-- From https://w3bits.com/css-centered-layout/ --}}
+    <meta name="viewport" content="width=device-width">
+    <title>A Perfect Score:</title>
+</head>
+<body id="main-content">
+    <div class="content-wrapper">
+    <p></p>
+    {{> navigation }}
+    {{{body}}}
+    
+    </div>
+</body>
+</html>

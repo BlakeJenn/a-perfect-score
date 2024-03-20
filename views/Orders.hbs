@@ -1,0 +1,143 @@
+{{!--
+Authors: Erin McBride and Blake Jennings
+Updated on 03/18/2024
+CS_340 Group 170
+Citation for the following file:
+   Date: 3/17/2024
+   Adapted from nodejs-start-app provided on git
+   Some baseline hbs code was copied over, then expanded upon to fit our page.
+   Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+
+   Date: 3/14/2024
+   Adapted from Mozilla mdn web docs with entity and attribute names and minor restructing
+   Source URL: https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
+
+    Date: 3/17/2024
+    Adapted from w3schools jsref
+    Source URL: https://www.w3schools.com/jsref/jsref_toisostring.asp
+ --}}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<h1>Orders:</h1>
+
+{{!-- Create a table --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<table id="orders">
+
+    {{!-- Header section --}}
+    {{!-- Updated from nodejs-start-app provided on git --}}
+    <thead>
+        <tr>
+            <th>Order Number:</th>
+            <th>Customer:</th>
+            <th>Order Date:</th>
+            <th>Order Total:</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    {{!-- Updated from nodejs-start-app provided on git --}}
+    <tbody>
+
+        {{#each data}}
+        <tr>
+            <td>{{this.orderID}}</td>
+            <td>{{this.customerID}}</td>
+            <td class="date-cell">{{this.orderDate}}</td>
+            <td >{{this.orderTotal}}</td>
+            <td><button onclick="deleteOrder({{this.orderID}})">Delete</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<script src="./js/delete_order.js"></script>
+
+<p></p>
+
+{{!-- Form to add an Order to the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Add Order:</h2>
+<form id="add-order-form-ajax">
+    <label for="input-customer-id">Customer ID: </label>
+    <select name="input-customer-id" id="input-customer-id-ajax">
+        <option value="">Select Customer ID</option>
+        <option value="none">None</option>
+        {{#each customers}}
+        <option value="{{this.customerID}}">{{this.customerID}} - {{this.firstName}} {{this.lastName}}</option>
+        {{/each}}
+    </select>
+    
+    <label for="input-order-date">Order Date: </label>
+    <input type="date" name="input-order-date" id="input-order-date-ajax">
+
+    <label for="input-order-total">Order Total:</label>
+    <input type="number" name="input-order-total" id="input-order-total-ajax" min="0">
+
+
+    <input type="submit">
+</form>
+<script src="./js/add_order.js"></script>
+
+<p></p>
+
+{{!-- Form to aupdate an Order in the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Update Order:</h2>
+<form id="update-order-form-ajax">
+
+    <label for="input-order-id">Order ID: </label>
+    <select name="input-order-id" id="mySelect-order-id">
+        <option value="text">Select an Order:</option>
+        {{#each data}}
+        <option value="{{this.orderID}}">{{this.orderID}}</option>
+        {{/each}}
+    </select>
+
+    <label for="input-customer-id">Customer ID: </label>
+    <select name="input-customer-id" id="input-customer-id-update">
+        <option value="">Select Customer</option>
+       <option value="none">None</option>
+        {{#each customers}}
+        <option value="{{this.customerID}}">{{this.customerID}} - {{this.firstName}} {{this.lastName}}</option>
+        {{/each}}
+    </select>
+
+    <label for="input-order-date">Order Date: </label>
+    <input type="date" name="input-order-date" id="input-order-date-update">
+
+
+    <label for="input-order-total">Order Total: </label>
+    <input type="number" name="input-order-total" id="input-order-total-update">
+
+    <input type="submit">
+
+
+</form>
+{{!-- Modified from nodejs-start-app provided on git --}}
+
+<script src="./js/update_order.js"></script>
+
+{{!-- Adapted from Mozilla mdn web docs and w3schools--}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const orderSelect = document.getElementById('mySelect-order-id');
+    orderSelect.addEventListener('change', function() {
+        const orderID = this.value;
+        fetch(`get-order-info?orderID=${orderID}`)
+        .then(response => response.json())
+        .then(order => {
+            document.getElementById('input-customer-id-update').value = order.customerID || '';
+            const orderDate = new Date(order.orderDate).toISOString().split('T')[0];
+            document.getElementById('input-order-date-update').value = orderDate;
+            document.getElementById('input-order-total-update').value = order.orderTotal || '';
+        })
+        .catch(error => console.error('Error fetching order', error));
+    });
+});
+</script>
+
+
+
+

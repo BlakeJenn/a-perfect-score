@@ -1,0 +1,131 @@
+{{!--
+Authors: Erin McBride and Blake Jennings
+Updated on 03/18/2024
+CS_340 Group 170
+Citation for the following file:
+   Date: 3/17/2024
+   Adapted from nodejs-start-app provided on git
+   Some baseline hbs code was copied over, then expanded upon to fit our page.
+   Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+   Source Authors: George Kochera, Michael Curry, Cortona1, dmgs11
+
+    Date: 3/14/2024
+    Adapted from Mozilla mdn web docs with entity and attribute names and minor restructing
+    Source URL: https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
+ --}}
+
+{{!-- Taken from nodejs-start-app provided on git --}}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<h1>Scores:</h1>
+
+{{!-- Create a table --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<table id="Scores">
+
+    {{!-- Header section --}}
+    {{!-- Modified from nodejs-start-app provided on git --}}
+    <thead>
+        <tr>
+            <th>Score ID:</th>
+            <th>Score Name:</th>
+            <th>Paperback Price:</th>
+            <th>Hardcover Price:</th>
+            <th>Digital Price:</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    {{!-- Body section --}}
+    {{!-- Updated from nodejs-start-app provided on git --}}
+    <tbody>
+
+        {{#each data}}
+        <tr>
+            <td>{{this.scoreID}}</td>
+            <td>{{this.scoreName}}</td>
+            <td>{{this.paperPrice}}</td>
+            <td>{{this.hardPrice}}</td>
+            <td>{{this.digiPrice}}</td>
+            <td><button onclick="deleteScore({{this.scoreID}})">Delete</button></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<script src="./js/delete_score.js"></script>
+
+
+<p></p>
+
+{{!-- Form to add a Score to the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Add Score:</h2>
+<form id="add-score-form-ajax">
+    <label for="input-score-name">Score Name: </label>
+    <input type="text" name="input-score-name" id="input-score-name-ajax">
+
+    <label for="input-paperPrice">Paper Price: </label>
+    <input type="number" name="input-paperPrice" id="input-paperPrice-ajax" min="0">
+
+    <label for="input-hardPrice">Hard Price: </label>
+    <input type="number" name="input-hardPrice" id="input-hardPrice-ajax" min="0">
+
+    <label for="input-digiPrice">Digital Price: </label>
+    <input type="number" name="input-digiPrice" id="input-digiPrice-ajax" min="0">
+
+    <input type="submit">
+</form>
+<script src="./js/add_score.js"></script>
+
+<p></p>
+
+{{!-- Form to update a Score in the table  --}}
+{{!-- Modified from nodejs-start-app provided on git --}}
+<h2>Update Score:</h2>
+<form id="update-score-form-ajax">
+
+    <label for="input-score-id">Score ID: </label>
+    <select name="input-score-id" id="mySelect-score-id">
+        <option value="test">Select Score ID</option>
+        {{#each data}}
+        <option value="{{this.scoreID}}">{{this.scoreID}} - {{this.scoreName}}</option>
+        {{/each}}
+    </select>
+
+    <label for="input-score-name">Score Name: </label>
+    <input type="text" name="input-score-name" id="input-score-name-update" min="0">
+
+    <label for="input-paperPrice">Paper Price: </label>
+    <input type="number" name="input-paperPrice" id="input-paperPrice-update" min="0">
+
+    <label for="input-hardPrice">Hard Price: </label>
+    <input type="number" name="input-hardPrice" id="input-hardPrice-update" min="0">
+
+    <label for="input-digiPrice">Digital Price: </label>
+    <input type="number" name="input-digiPrice" id="input-digiPrice-update" min="0">
+
+    <input type="submit">
+
+</form>
+{{!-- Modified from nodejs-start-app provided on git --}}
+<script src="./js/update_score.js"></script>
+
+{{!-- Adapted from Mozilla mdn web docs --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const scoreSelect = document.getElementById('mySelect-score-id');
+    scoreSelect.addEventListener('change', function() {
+        const scoreID = this.value;
+        fetch(`get-score-info?scoreID=${scoreID}`)
+        .then(response => response.json())
+        .then(score => {
+            document.getElementById('input-score-name-update').value = score.scoreName || '';
+            document.getElementById('input-paperPrice-update').value = score.paperPrice || '';
+            document.getElementById('input-hardPrice-update').value = score.hardPrice || '';
+            document.getElementById('input-digiPrice-update').value = score.digiPrice || '';   
+        })
+        .catch(error => console.error('Error fetching score', error));
+    });
+});
+</script>
